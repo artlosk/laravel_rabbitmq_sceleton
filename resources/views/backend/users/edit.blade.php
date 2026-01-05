@@ -226,6 +226,4 @@
             </form>
         </div>
     </div>
-
-    {{-- JavaScript вынесен в отдельный файл resources/js/backend/users.js --}}
 @endsection

@@ -8,6 +8,7 @@
 - Laravel 12.0
 - MySQL 8.0
 - Redis
+- RabbitMQ 3
 - Docker (Laravel Sail)
 
 ## Основные компоненты
@@ -48,6 +49,41 @@ REST API с аутентификацией через Laravel Sanctum:
 - Управление токенами через административную панель
 - Готовые endpoints для работы с постами
 - Policy-based авторизация
+
+### Система уведомлений
+
+Автоматические email-уведомления о новых постах через RabbitMQ:
+
+**Возможности:**
+- Мультиселект ролей и пользователей (можно выбрать несколько за раз)
+- Асинхронная отправка через очередь RabbitMQ
+- Управление через административную панель
+- Сохранение писем в файлы (`storage/app/private/emails/`) для разработки
+- Поддержка реальной отправки email для production
+
+**Быстрый старт:**
+
+1. Настройте `.env`:
+```env
+QUEUE_CONNECTION=rabbitmq
+MAIL_MAILER=file  # для dev, или smtp для production
+```
+
+2. Запустите воркер:
+```bash
+./vendor/bin/sail artisan queue:work rabbitmq --queue=notifications --tries=3 --timeout=60
+```
+
+3. В админ-панели перейдите в **"Уведомления о постах"** и настройте получателей
+
+4. При создании поста уведомления автоматически отправятся в очередь
+
+5. Проверьте письма:
+```bash
+./vendor/bin/sail exec laravel.test ls -lah storage/app/private/emails/
+# Просмотреть письмо:
+./vendor/bin/sail exec laravel.test cat storage/app/private/emails/имя_файла.html
+```
 
 ## Установка
 
@@ -121,6 +157,22 @@ docker run --rm \
 - Пароль: `admin123`
 
 При первом запуске сидера в консоли будет выведен API токен для администратора.
+
+### Docker контейнеры
+
+После запуска будут доступны следующие контейнеры:
+- `rabbit-app` - Laravel приложение (порт 80)
+- `rabbit-mysql` - MySQL база данных (порт 3306)
+- `rabbit-redis` - Redis (порт 6379)
+- `rabbit-rabbitmq` - RabbitMQ (порты 5672, 15672)
+
+### RabbitMQ Management UI
+
+Веб-интерфейс управления RabbitMQ: `http://localhost:15672`
+- Логин: `guest`
+- Пароль: `guest`
+
+**Подробная документация**: [RABBITMQ_GUIDE.md](RABBITMQ_GUIDE.md)
 
 ## Структура проекта
 
@@ -214,7 +266,7 @@ docker run --rm \
 Или напрямую через Docker:
 
 ```bash
-docker exec -it laravel_sceleton-laravel.test-1 bash
+docker exec -it rabbit-app bash
 ```
 
 ## Конфигурация
@@ -236,6 +288,41 @@ docker exec -it laravel_sceleton-laravel.test-1 bash
 ### Права доступа
 
 Конфигурация системы прав находится в `config/permission.php`. По умолчанию используется guard `web` без поддержки команд.
+
+### RabbitMQ и очереди
+
+Конфигурация очередей находится в `config/queue.php`. Для использования RabbitMQ:
+
+1. Установите пакет:
+```bash
+./vendor/bin/sail composer require vladimir-yuldashev/laravel-queue-rabbitmq
+```
+
+2. Настройте `.env`:
+```env
+QUEUE_CONNECTION=rabbitmq
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_VHOST=/
+```
+
+3. Запустите воркер:
+```bash
+./vendor/bin/sail artisan queue:work rabbitmq --queue=notifications --tries=3 --timeout=60
+```
+
+4. Просмотр писем (для разработки):
+```bash
+# Список писем
+./vendor/bin/sail exec laravel.test ls -lah storage/app/private/emails/
+
+# Просмотр письма
+./vendor/bin/sail exec laravel.test cat storage/app/private/emails/имя_файла.html
+```
+
+Подробная документация: [RABBITMQ_GUIDE.md](RABBITMQ_GUIDE.md)
 
 ## API
 

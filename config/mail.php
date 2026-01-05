@@ -79,6 +79,10 @@ return [
             'transport' => 'array',
         ],
 
+        'file' => [
+            'transport' => 'file',
+        ],
+
         'failover' => [
             'transport' => 'failover',
             'mailers' => [

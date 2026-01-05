@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\AdminController;
 use App\Http\Controllers\Backend\PostController as BackendPostController;
+use App\Http\Controllers\Backend\PostNotificationSettingController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Frontend\DashboardController;
@@ -121,4 +122,7 @@ Route::middleware(['auth', 'permission:access-admin-panel'])->prefix('admin')->g
 
     Route::post('filepond/upload', [App\Http\Controllers\Backend\MediaController::class, 'uploadFilepond'])->name('backend.filepond.upload');
     Route::delete('filepond/delete', [App\Http\Controllers\Backend\MediaController::class, 'deleteFilepond'])->name('backend.filepond.delete');
+
+    Route::resource('post-notification-settings', PostNotificationSettingController::class)->names('backend.post-notification-settings');
+    Route::patch('post-notification-settings/{postNotificationSetting}/toggle-active', [PostNotificationSettingController::class, 'toggleActive'])->name('backend.post-notification-settings.toggle-active');
 });

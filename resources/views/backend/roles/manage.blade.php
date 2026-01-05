@@ -20,7 +20,8 @@
                 @csrf
                 <div class="form-group">
                     <label for="user_id" class="form-label">Select User</label>
-                    <select name="user_id" id="user_id" class="form-control select2" custom-select>
+                    <select name="user_id" id="user_id" class="form-control select2" custom-select
+                        data-route-users="{{ url('admin/users') }}">
                         <option value="">Select a user</option>
                         @foreach ($users as $user)
                             <option value="{{ $user->getAttribute('id') }}">{{ $user->getAttribute('name') }}
@@ -41,8 +42,8 @@
                     <label>Permissions</label>
                     <select name="permissions[]" id="permissions" class="form-control select2" custom-select>
                         @foreach ($permissions as $permission)
-                            <option
-                                value="{{ $permission->getAttribute('name') }}">{{ $permission->getAttribute('name') }}</option>
+                            <option value="{{ $permission->getAttribute('name') }}">{{ $permission->getAttribute('name') }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -53,35 +54,4 @@
             {{ $users->links() }}
         </div>
     </div>
-
-    @push('scripts')
-        <script>
-            $(document).ready(function () {
-                $('.select2').select2({
-                    placeholder: 'Select options',
-                    allowClear: true
-                });
-
-                $('#user_id').on('change', function () {
-                    const userId = $(this).val();
-                    if (userId) {
-                        $.ajax({
-                            url: '{{ url('admin/users') }}/' + userId + '/roles-permissions',
-                            type: 'GET',
-                            success: function (data) {
-                                $('#roles').val(data.roles).trigger('change');
-                                $('#permissions').val(data.permissions).trigger('change');
-                            },
-                            error: function () {
-                                alert('Failed to load user roles and permissions.');
-                            }
-                        });
-                    } else {
-                        $('#roles').val([]).trigger('change');
-                        $('#permissions').val([]).trigger('change');
-                    }
-                });
-            });
-        </script>
-    @endpush
 @endsection
