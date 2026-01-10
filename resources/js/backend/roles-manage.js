@@ -1,31 +1,39 @@
-import $ from 'jquery';
+import { initSelect2, waitForSelect2 } from './select2-utils';
 
-$(document).ready(function () {
-    $('.select2').select2({
+function initRolesManage() {
+    initSelect2({
         placeholder: 'Select options',
         allowClear: true
     });
 
-    const $userSelect = $('#user_id');
-    const routeUrl = $userSelect.data('route-users');
+    waitForSelect2(() => {
+        const $userSelect = window.$('#user_id');
+        const routeUrl = $userSelect.data('route-users');
 
-    $userSelect.on('change', function () {
-        const userId = $(this).val();
-        if (userId) {
-            $.ajax({
-                url: routeUrl + '/' + userId + '/roles-permissions',
-                type: 'GET',
-                success: function (data) {
-                    $('#roles').val(data.roles).trigger('change');
-                    $('#permissions').val(data.permissions).trigger('change');
-                },
-                error: function () {
-                    alert('Failed to load user roles and permissions.');
-                }
-            });
-        } else {
-            $('#roles').val([]).trigger('change');
-            $('#permissions').val([]).trigger('change');
-        }
+        $userSelect.on('change', function () {
+            const userId = window.$(this).val();
+            if (userId) {
+                window.$.ajax({
+                    url: routeUrl + '/' + userId + '/roles-permissions',
+                    type: 'GET',
+                    success: function (data) {
+                        window.$('#roles').val(data.roles).trigger('change');
+                        window.$('#permissions').val(data.permissions).trigger('change');
+                    },
+                    error: function () {
+                        alert('Failed to load user roles and permissions.');
+                    }
+                });
+            } else {
+                window.$('#roles').val([]).trigger('change');
+                window.$('#permissions').val([]).trigger('change');
+            }
+        });
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRolesManage);
+} else {
+    initRolesManage();
+}

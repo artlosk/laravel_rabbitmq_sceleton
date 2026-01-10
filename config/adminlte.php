@@ -103,12 +103,12 @@ return [
     |
     */
 
-    'logo' => '<b>Shopping</b>List',
+    'logo' => '<b>Laravel Rabbit</b>',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Shopping List Logo',
+    'logo_img_alt' => 'Laravel Rabbit Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -432,7 +432,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -482,7 +482,7 @@ return [
             ],
         ],
         'Highcharts' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'js',
